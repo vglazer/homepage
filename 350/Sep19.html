@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html> 
+
+<head>
+    <meta http-equiv="Content-Type" 
+          content="text/html; charset=iso-8859-1">
+ 
+    <title>CSC350 Tutorial</title>
+</head>
+<body bgcolor="#99ccff" link="purple" vlink="black"> 
+
+<h1>Stability, Conditioning and Machine Epsilon</h1>
+<hr align="left" size=1>
+
+<i>Stability is a property of the algorithm
+alone.</i> An algorithm is said to be <b>stable</b> if it introduces little 
+error of its own (i.e. through truncation, roundoff, cancellation, etc.). In 
+particular, the (approximate) solution one obtains via a stable algorithm is 
+<i>the exact solution to a "nearby" problem</i> in the following sense: 
+|x - x_hat| is "small", where x_hat is such that f(x_hat) = f_approx(x) 
+(here f is the function we're trying to compute and f_approx is  
+some algorithm that computes it, possibly inexactly). This is 
+equivalent to saying that <i>an algorithm is stable when the backward error 
+is "small"</i>, which gives us a way to quantify stability. But how do we
+compute the value of x_hat?  Given some algorithm f_approx (think of it as a 
+"black box" whose internal workings are unimportant), we get y_hat = 
+f_approx(x) as our approximation to y = f(x), the true value of f for 
+input x. We can then think of y_hat, which is really <i>the approximate 
+solution for input x</i>, as <i> an exact solution for some perturbed input 
+x_hat</i>. In other words, we set f(x_hat) = y_hat, which implicitly 
+determines x_hat. Assuming we're able to invert f, this yields x_hat = 
+f^{-1}(y_hat), which we can actually calculate.
+<p> For example,
+suppose f(x) = cos(x). The Taylor series expansion of f (about 0) is given by 
+f(x) = 1 - x^2/2 + x^4/4! - ... . We can truncate the series after the first 
+three terms to obtain f_approx(x) = 1 - x^2/2 + x^4/4!. Now suppose that x = 1. 
+Then y_hat = f_approx(x) = 1 - 1/2 + 1/24 = 0.54166..., so x_hat satisfies the 
+equation cos(x_hat) = y_hat ~= 0.5417 (where '~=' stands for "approximately 
+equal"). Solving for x_hat, we get x_hat = cos^{-1}(0.5417) = 
+arccos(0.5417) ~= 0.998. Since the relative backward error |x - x_hat|/x = 
+|1 - 0.998|/1 = 0.002 or 0.2% is "small", we can reasonably conclude that 
+f_approx is a stable algorithm. 
+<p>What about <b>conditioning</b>? The crucial point is that <i>
+<b>conditioning</b> is a property of the problem alone</i>. A problem is said 
+to be <b>well-conditioned</b> (or well-posed) if |x1 - x2| "small" => 
+|f(x1) - f(x2)| "small", i.e. <i>minor perturbations of the input result in 
+minor perturbations of the output</i>. Intuitively, this means that f is a 
+"nice" function. Conditioning is quantified using the notion of a <b>condition 
+number</b>, defined as c = cond(f,x) = |(f(x) - f(x_hat))/f(x)| / 
+|(x - x_hat)/x|, where x_hat is a point "near" x (i.e. |x - x_hat| is
+"small").  If c >> 1 (where '>>' stands for "much greater 
+than"), the problem is said to be <b>ill-conditioned</b>. Note that cond is a
+function of x, i.e. conditioning depends on the particular input one has in
+mind -- a problem can be well-conditioned for most inputs yet extremely 
+ill-conditioned for certain "bad inputs". 
+<p>As the book observes, combining a well-conditioned 
+problem with a stable algorithm always gives good results, since the algorithm 
+will return the exact solution to a nearby problem (by stability), which is a 
+reasonable approximation to the exact solution to the original problem (by 
+conditioning).  If we have an unstable algorithm for a well-conditioned 
+problem, it might be (and usually is) possible to come up with a different, 
+stable, algorithm.  However, if the problem is ill-conditioned, we're out of 
+luck -- even if our algorithm is stable, the exact solution to a nearby 
+problem is probably a terrible approximation to the original problem.
+<p>Finally, a few words about <b>machine epsilon</b> (a.k.a. machine precision
+or unit roundoff). This small positive number is <i>an upper bound on the
+relative roundoff error</i> (which is a consequence of discretizing the 
+real line), i.e. |(fl(x) - x)/x| <= machine_epsilon (here 'fl(x)' stands for
+"the floating point representation of x"). There are several different 
+definitions of this quantity, and unfortunately they aren't exactly equivalent.
+Here's a nice explicit formulation which holds if rounding to nearest
+is used: machine_epsilon = 0.5*beta^(1-p) (here beta is the base, 
+e.g. 2, and p is the number of digits in the mantissa). Note that, although
+both are small numbers, machine epsilon shouldn't be confused with
+the <b>underflow level</b> UFL = beta^L (here 'L' is the smallest 
+exponent value), which is the smallest positive machine number  (I think I 
+may have said UFL is negative, which is clearly wrong). In particular, 
+<i>machine epsilon depends on p but not L, whereas UFL depends on L but not 
+p</i>.
+
+<!--
+<br><br>
+
+        <p><i>Last updated: September 25th, 2003</i>
+        <p>
+          <a href="http://validator.w3.org/check/referer"><img border="0"
+              src="http://www.w3.org/Icons/valid-html401"
+              alt="Valid HTML 4.01!" height="31" width="88"></a>
+        </p> -->
+
+</body>
+</html>

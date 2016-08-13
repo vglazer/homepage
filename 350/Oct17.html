@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html> 
+
+<head>
+    <meta http-equiv="Content-Type" 
+          content="text/html; charset=iso-8859-1">
+ 
+    <title>CSC350 Tutorial</title>
+</head>
+<body bgcolor="#99ccff" link="purple" vlink="black"> 
+
+<h1>Curve fitting using QR factorization</h1>
+<hr align="left" size=1>
+Consider the problem of fitting the "best" (in the least squares sense) line 
+f(x) = w(1)*x + w(2) to the following dataset: x = [0 3 5]', y = [1 2 5.2]'. 
+We first form the Vandermonde matrix X = [x ones(3,1)]. Notice that 
+cond(X) = 5.8307; this represents the inherent conditioning of the given curve
+fitting problem. Normal equations yield A = X'*X = [34 8; 8 3], b = X'*y = 
+[36.5; 9.9] and w = [0.7974; 1.1737]. Observe that cond(A) = 33.9969, which is
+approximately equal to cond(X)^2. We interpret this to mean that the normal
+equations algorithm is <i>unstable</i>. Now let's compute the QR factorization
+of X instead: [Q R_0] = qr(X), Q = [0 0.9459 0.3244; -0.5145 0.2782 -0.8111;
+-0.8575 -0.1669 0.4867] and R_0 = [-5.8310 -1.3720; 0 1.0572; 0 0]. The
+matrix R, as we've defined it, can then be obtain from R_0 by taking the first 
+2 rows, i.e. R = R_0(1:2,:). Notice that X is a 3x2 matrix, Q is a 3x3 matrix 
+and R is a 2x2 matrix. Also, R is upper-triangular and Q*Q' = eye(3) so Q' = 
+inv(Q) and Q is orthogonal, just like we wanted. Although we don't really know whether
+qr() obtained Q and R using Householder transformations (as opposed to, say, 
+Givens rotations or Gram-Schmidt), QR factorization is unique up to scaling 
+factors so the end result is the same. We can now solve for w by setting 
+w = R \ c, where b = Q'*y and c = b(1:2) (R is a 2x2 matrix, so we need to 
+'cut off' all entires of the column vector Q'*y that lie below the second row),
+obtaining w = [0.7974; 1.1737], as before. However, cond(R) = 5.8307 = cond(X), 
+so, unlike normal equations, the QR algorithm (by which I mean factor the
+matrix into Q and R using Householder transformations, then solve the
+resulting upper-triangular system) is <i>stable</i>. To get an idea for what
+the fitted line looks like, try using pts =  0:0.1:5; plot(x,y,'o',pts,w(1)*pts + w(2)).
+<!--
+<br><br>
+
+        <p><i>Last updated: October 18th, 2003</i>
+        <p>
+          <a href="http://validator.w3.org/check/referer"><img border="0"
+              src="http://www.w3.org/Icons/valid-html401"
+              alt="Valid HTML 4.01!" height="31" width="88"></a>
+        </p> -->
+
+</body>
+</html>
