@@ -1,9 +1,0 @@
-a { text-decoration: none; color: black; font-size: 14pt }
-a.link { font-size: 16pt; color: maroon }
-a.big { font-size: 20pt; color: maroon }
-h1 { font-size: 20pt; color: black; font-family: helterskelter; }
-h2 { font-variant: small-caps; font-size: 16pt; color: black; font-family: helterskelter; }
-body { font-size: 12pt; background-color: white; }
-table.main { background-color: gold; border-color: black; 
-	     border-style: solid; }
-p, li, ul, ol { font-size: 12pt; font-family: helterskelter; }
